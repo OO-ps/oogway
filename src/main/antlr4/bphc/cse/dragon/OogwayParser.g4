@@ -83,7 +83,12 @@ body returns [String tac]: L_CURLY stat* R_CURLY {
 
 stat returns [String tac]: (
       l=loop_stat {$tac = $l.tac + "\n";}
-    | ifs=if_stat el=else_stat? {$tac = $ifs.tac + $el.tac + "\n";}
+    | ifs=if_stat el=else_stat? {
+    if (_localctx.el == null)
+        $tac = $ifs.tac + "\n";
+    else
+        $tac = $ifs.tac + $el.tac + "\n";
+    }
     | a=assign {$tac = $a.tac + "\n";}
     | f=func_call {$tac = $f.tac + "\n";}
     | i=input {$tac = $i.tac + "\n";}
@@ -94,14 +99,13 @@ stat returns [String tac]: (
 loop_stat returns [String tac] locals [String jmpTag]: KEYWORD_WHILE L_PAREN expr R_PAREN body {
     $jmpTag = getNameForTemporary(null);
     $tac = _localctx.expr.tac + "\n" + "JMPEVAL " + $expr.name + " " + $jmpTag + "\n" + $body.tac
-        + "\n" + $jmpTag + "\n";
+        + "\n" + $jmpTag + ":\n";
 };
 
 if_stat returns [String tac] locals [String jmpTag]: KEYWORD_IF L_PAREN expr R_PAREN body {
     $jmpTag = getNameForTemporary(null);
-    $tac = _localctx.expr.tac + "\n" + "JMPEVAL " + $expr.name + " " + $jmpTag + "\n"
-    + $body.tac + "\n"
-        + $jmpTag + "\n";
+    $tac = _localctx.expr.tac + "\n" + "JMPEVAL " + $expr.name + " " + $jmpTag + "\n" + $body.tac
+     + "\n" + $jmpTag + ":\n";
 };
 
 else_stat returns [String tac]: body {
@@ -112,7 +116,7 @@ assign returns[String tac]: id ASSIGN (expr) SEMI {
     $tac = _localctx.expr.tac + "\n" + "MOV " + $id.name + " " + $expr.name;
 };
 
-func_call returns[String tac]: a=id L_PAREN arguments R_PAREN SEMI {
+func_call returns[String tac]: a=id arguments {
     $tac = "CALL " + $a.name;
 };
 
@@ -201,9 +205,14 @@ expr returns[String name] locals [String exprVarName, String tac]: NOT a1=expr {
 input returns [String tac]: KEYWORD_INPUT id {
     $tac = "Syscall read " + $id.name;
 };
-output returns [String tac]: KEYWORD_OUTPUT STRING | id {
+
+output returns [String tac]: KEYWORD_OUTPUT x=STRING {
+    $tac = "Syscall write " + _localctx.x.getText();
+    }
+
+    | id {
     $tac = "Syscall write " + $id.name;
-}
+    }
 ;
 
 id returns [String name]: x=ID {

@@ -1,0 +1,10 @@
+main() {
+    a=5;
+    b="India";
+    input c
+    output "string"
+    d=a+c*4/6+6+8.885+h();
+    while(5+8*8==5+9) {
+        g= d * 8.8;
+    }
+}
