@@ -1,0 +1,8 @@
+ret func2() {
+r = "this";
+t = t / b + t2 * 0;
+}
+
+main () {
+a = b[7];
+}
