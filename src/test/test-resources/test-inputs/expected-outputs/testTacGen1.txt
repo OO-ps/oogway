@@ -1,0 +1,10 @@
+def func2:
+MOV t0 "this"
+DIV t3 t1 t2
+MUL t5 t4 0
+ADD t6 t3 t5
+MOV t1 t6
+
+def main:
+LOAD t8 7(b)
+MOV t7 t8

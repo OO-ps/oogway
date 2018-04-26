@@ -1,0 +1,9 @@
+def main:
+GT t1 t0 6
+JMPEVAL t1 t5
+MOV t0 5
+LT t3 t2 5
+JMPEVAL t3 t4
+MOV t2 6
+t4:
+t5:

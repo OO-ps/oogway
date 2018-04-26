@@ -1,0 +1,6 @@
+def main:
+MOV t0 5
+MOV t1 6
+CALL h
+MOV t3 ret_loc
+MOV t2 t3

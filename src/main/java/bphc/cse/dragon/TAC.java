@@ -15,6 +15,7 @@ public final class TAC {
             Pattern.compile("(?m)(^\\s+|[\\t\\f ](?=[\\t\\f ])|[\\t\\f ]$|\\s+\\z)");
     private static final Pattern PATTERN_LF_FOR_FUNCS = Pattern.compile("def");
     private static final Pattern PATTERN_LF_AT_START = Pattern.compile("^\\n");
+    private static final Pattern LF = Pattern.compile("\\n");
 
     public static void main(String... args) throws IOException {
         final OogwayParser oogwayParser = createOogwayParser(readFile(args[0]));
@@ -23,7 +24,15 @@ public final class TAC {
     }
 
     public static String getTac(OogwayParser.StartContext start) {
-        return PATTERN_LF_AT_START.matcher(PATTERN_LF_FOR_FUNCS.matcher(PATTERN_MULTI_LF.matcher(start.tac).replaceAll("")).replaceAll("\ndef")).replaceAll("") + "\n";
+        return LF.matcher(PATTERN_LF_AT_START.matcher(
+                PATTERN_LF_FOR_FUNCS.matcher(
+                        PATTERN_MULTI_LF.matcher(
+                                start.tac
+                        ).replaceAll("")
+                ).replaceAll("\ndef")
+        ).replaceAll(""))
+                .replaceAll(System.lineSeparator())
+                + System.lineSeparator();
     }
 
     public static OogwayParser createOogwayParser(String input) {
